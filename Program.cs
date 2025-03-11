@@ -1,8 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<ZooManagementDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("ZooManagementDbContext") ?? throw new InvalidOperationException("Connection string 'ZooManagementDbContext' not found.")));
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddDbContext<ZooManagementDbContext>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
