@@ -13,4 +13,5 @@ using Models;
         }
 
         public DbSet<Models.Animal> Animal { get; set; } = default!;
+        public DbSet<Models.Enclosure> Enclosure { get; set; } = default!;
     }

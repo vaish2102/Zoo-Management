@@ -8,10 +8,14 @@ public class Animal
     public string Species { get; set; }
     public string Classification { get; set; }
     public string Sex { get; set; }
-    public DateTime DateOfBirth{ get; set; }
-    public DateTime DateOfZooEntry{ get; set; }
-    public DateTime DateOfZooLeaving{ get; set; }
-    public DateTime DateOfPassing{ get; set; }
-    
+    public DateTime DateOfBirth { get; set; }
+    public DateTime DateOfZooEntry { get; set; }
+    public DateTime? DateOfZooLeaving { get; set; }
+    public DateTime? DateOfPassing { get; set; }
+    public Enclosure? EnclosureName {get;set;}
+
     public Animal() {}
+    public Animal(Enclosure enclosure) {
+        EnclosureName = enclosure;
+    }
 }

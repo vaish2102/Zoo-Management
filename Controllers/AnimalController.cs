@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +72,22 @@ namespace Zoo_Management.Controllers
 
             return NoContent();
         }
+
+        // POST:api/MockData
+      /*  [HttpPost]
+        public void PostMockData()
+        {
+              List<Animal> source = new List<Animal>();  
+           //  Animal source = new Animal();
+             using (StreamReader r = new StreamReader("MOCK_DATA.json"))  
+            {  
+                string json = r.ReadToEnd();  
+                source = JsonSerializer.Deserialize<List<Animal>>(json); 
+                foreach(var animal in source){
+                    PostAnimal(animal) ;
+                }    
+            }
+        }*/
 
         // POST: api/Animal
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
