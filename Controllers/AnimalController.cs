@@ -73,22 +73,7 @@ namespace Zoo_Management.Controllers
             return NoContent();
         }
 
-        // POST:api/MockData
-      /*  [HttpPost]
-        public void PostMockData()
-        {
-              List<Animal> source = new List<Animal>();  
-           //  Animal source = new Animal();
-             using (StreamReader r = new StreamReader("MOCK_DATA.json"))  
-            {  
-                string json = r.ReadToEnd();  
-                source = JsonSerializer.Deserialize<List<Animal>>(json); 
-                foreach(var animal in source){
-                    PostAnimal(animal) ;
-                }    
-            }
-        }*/
-
+        
         // POST: api/Animal
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -96,9 +81,25 @@ namespace Zoo_Management.Controllers
         {
             _context.Animal.Add(animal);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetAnimal", new { id = animal.Id }, animal);
         }
+
+        // POST:api/MockData/MOCK_DATA.json
+        [HttpPost("{fileName}")]
+         public async Task<ActionResult<Animal>> PostMockData(string fileName)
+         {
+              List<Animal> source = new List<Animal>(); 
+              Console.WriteLine(fileName);
+              using (StreamReader r = new StreamReader("MOCK_DATA.json")){  
+                string json = r.ReadToEnd();  
+                source = JsonSerializer.Deserialize<List<Animal>>(json); 
+                foreach(var obj in source){
+                     _context.Animal.Add(obj);
+                    await _context.SaveChangesAsync();
+                }    
+            }
+              return NoContent();
+         }
 
         // DELETE: api/Animal/5
         [HttpDelete("{id}")]
