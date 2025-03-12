@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ZooManagementDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("ZooManagementDbContext") ?? throw new InvalidOperationException("Connection string 'ZooManagementDbContext' not found.")));
 
+
 // Add services to the container.
 
 builder.Services.AddControllers();

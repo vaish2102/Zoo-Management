@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Zoo_Management.Migrations
 {
     [DbContext(typeof(ZooManagementDbContext))]
-    partial class ZooManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250312134952_animalchanges3")]
+    partial class animalchanges3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -38,8 +41,8 @@ namespace Zoo_Management.Migrations
                     b.Property<DateTime?>("DateOfZooLeaving")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EnclosureName")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("EnclosureNameId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -54,6 +57,8 @@ namespace Zoo_Management.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnclosureNameId");
 
                     b.ToTable("Animal");
                 });
@@ -74,6 +79,15 @@ namespace Zoo_Management.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Enclosure");
+                });
+
+            modelBuilder.Entity("Models.Animal", b =>
+                {
+                    b.HasOne("Models.Enclosure", "EnclosureName")
+                        .WithMany()
+                        .HasForeignKey("EnclosureNameId");
+
+                    b.Navigation("EnclosureName");
                 });
 #pragma warning restore 612, 618
         }

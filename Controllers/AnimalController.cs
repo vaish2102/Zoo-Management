@@ -1,125 +1,67 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using NLog;
+using Logging;
 
-namespace Zoo_Management.Controllers
-{
+namespace Zoo_Management.Controllers{
     [Route("api/[controller]")]
     [ApiController]
-    public class AnimalController : ControllerBase
-    {
+    public class AnimalController : ControllerBase{
         private readonly ZooManagementDbContext _context;
-
-        public AnimalController(ZooManagementDbContext context)
-        {
+        private static readonly NLog.ILogger Logger = LogManager.GetLogger("File Logger");
+        public AnimalController(ZooManagementDbContext context){
             _context = context;
+            LogConfig.ConfigureLog();
         }
-
+        
         // GET: api/Animal
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Animal>>> GetAnimal()
-        {
+        public async Task<ActionResult<IEnumerable<Animal>>> GetAnimal(){
+            Logger.Info("Getting the list of animals");
             return await _context.Animal.ToListAsync();
         }
 
         // GET: api/Animal/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Animal>> GetAnimal(int id)
-        {
+        public async Task<ActionResult<Animal>> GetAnimal(int id){
             var animal = await _context.Animal.FindAsync(id);
-
-            if (animal == null)
-            {
+            Logger.Info("Getting the details of "+animal);
+            if (animal == null){
+                Logger.Error("There are no details for "+animal);
                 return NotFound();
             }
-
             return animal;
         }
 
-        // PUT: api/Animal/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAnimal(int id, Animal animal)
-        {
-            if (id != animal.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(animal).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AnimalExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        
         // POST: api/Animal
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Animal>> PostAnimal(Animal animal)
-        {
+        public async Task<ActionResult<Animal>> PostAnimal(Animal animal){
+            Logger.Info("Adding animal records to database");
             _context.Animal.Add(animal);
+            Logger.Info("Animal records added to database successfully");
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetAnimal", new { id = animal.Id }, animal);
         }
 
         // POST:api/MockData/MOCK_DATA.json
         [HttpPost("{fileName}")]
-         public async Task<ActionResult<Animal>> PostMockData(string fileName)
-         {
-              List<Animal> source = new List<Animal>(); 
-              Console.WriteLine(fileName);
-              using (StreamReader r = new StreamReader("MOCK_DATA.json")){  
-                string json = r.ReadToEnd();  
-                source = JsonSerializer.Deserialize<List<Animal>>(json); 
-                foreach(var obj in source){
-                     _context.Animal.Add(obj);
+         public async Task<ActionResult<Animal>> PostMockData(string fileName){
+            Logger.Info("Adding mock animal data to database from "+fileName);
+            List<Animal> animalList = new List<Animal>(); 
+            using (StreamReader reader = new StreamReader(fileName)){ 
+                Logger.Info("Reading the file");
+                string animalData = reader.ReadToEnd();  
+                animalList = JsonSerializer.Deserialize<List<Animal>>(animalData); 
+                foreach(var animalObj in animalList){
+                     _context.Animal.Add(animalObj);
+                      Logger.Info("Adding the mock data to database");
                     await _context.SaveChangesAsync();
+                    Logger.Info("Mock data added to database successfully ");
                 }    
             }
-              return NoContent();
-         }
-
-        // DELETE: api/Animal/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAnimal(int id)
-        {
-            var animal = await _context.Animal.FindAsync(id);
-            if (animal == null)
-            {
-                return NotFound();
-            }
-
-            _context.Animal.Remove(animal);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool AnimalExists(int id)
-        {
-            return _context.Animal.Any(e => e.Id == id);
-        }
+              return RedirectToAction("GetAnimal");
+        }        
     }
 }
