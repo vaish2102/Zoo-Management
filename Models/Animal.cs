@@ -9,9 +9,9 @@ public class Animal{
     public DateTime DateOfZooEntry { get; set; }
     public DateTime? DateOfZooLeaving { get; set; }
     public DateTime? DateOfPassing { get; set; }
-    public string? EnclosureName {get;set;}
+    public Enclosure Enclosure {get;set;}
     public Animal() {}
     public Animal(Enclosure enclosure) {
-        EnclosureName = enclosure.Name;
+        Enclosure = enclosure;
     }
 }
